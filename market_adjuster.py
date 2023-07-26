@@ -21,16 +21,35 @@ def min_price(price):
 
 def edition_checker(df_rows):
     '''
-        Returns weather a there is both an unlimited and 1st editon of the same card
+        Returns whether an entry has both an unlimited and 1st editon of the same card
 
         Input: row of dataframe with several columns
         Output: boolean value of weateher or not the card as a different edition
     '''
-    if ('Unlimited' in df_rows['Condition']) and (local_market['Product Name'].value_counts()[df_rows['Product Name']]> 1) and (local_market['Number'].value_counts()[df_rows['Number']]> 1):
-        return True
+    filter = ['Ghost Rare', 'Starlight Rare', 'Collector\'s Rare', 'Mosaic Rare', 'Shaterfoil Rare', 'Starfoil Rare', 'Ultimate Rare']
+
+    filter_rarity = (local_market['Rarity'].isin(filter))
+    filter_normal_rarity = (~local_market['Rarity'].isin(filter))
+
+    high_rarity = local_market[filter_rarity]
+    normal_rarity = local_market[filter_normal_rarity]
+
+    if df_rows['Rarity'] in filter:
+        if ('Unlimited' in df_rows['Condition']) and (high_rarity['Product Name'].value_counts()[df_rows['Product Name']] > 1) and (high_rarity['Number'].value_counts()[df_rows['Number']] > 1):
+            return True
+        else:
+            return False
     else:
-        return False
+        if ('Unlimited' in df_rows['Condition']) and (normal_rarity['Number'].value_counts()[df_rows['Number']] > 1) and (normal_rarity['Product Name'].value_counts()[df_rows['Product Name']] > 1):
+            return True
+        else:
+            return False
+            
     
+
+    
+
+     
 
 def price_guideline(df_rows):
     '''
@@ -47,10 +66,18 @@ def price_guideline(df_rows):
         return 5
     elif ((df_rows['TCG Low Price With Shipping'] >= 25) and (df_rows['Total Quantity'] >= 3) and (not (df_rows['ed_bool']))):
         return df_rows['TCG Low Price With Shipping'] + 2
+    elif (df_rows['TCG Low Price With Shipping'] >= 4) and (df_rows['TCG Low Price With Shipping'] <= 5.49) and ((df_rows['ed_bool'])):
+        return 4.76
+    elif ((df_rows['TCG Low Price With Shipping'] >= 25) and (df_rows['Total Quantity'] >= 3) and ((df_rows['ed_bool']))):
+        return df_rows['TCG Low Price With Shipping'] + 1.76
+    elif df_rows['ed_bool']:
+        temp = df_rows['TCG Low Price With Shipping'] - .24
+        return min_price(temp)
     else :
         return df_rows['TCG Marketplace Price']
+    
 
-local_market['ed_bool'] = local_market[['Condition', 'Product Name', 'Number']].apply(edition_checker, axis='columns')
+local_market['ed_bool'] = local_market[['Condition', 'Product Name', 'Number', 'Rarity']].apply(edition_checker, axis='columns')
 local_market['TCG Marketplace Price'] = local_market[['Condition', 'TCG Low Price With Shipping', 'Total Quantity', 'TCG Marketplace Price', 'ed_bool']].apply(price_guideline , axis='columns')
 
 #local_market.drop(columns='ed_bool', inplace=True)
