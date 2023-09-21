@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}File uploader{% endblock %}
+
+{% block main %}
+
+<h1>Upload File Here</h1>
+
+{% for message in get_flashed_messages() %}
+<h2>{{ message }}</h2>
+{% endfor %}
+<div class="container">
+    <div class="card-deck mb-3">
+      <div class="card mb-4 shadow-sm">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+            <h4 class="my-0 font-weight-normal text-center">File</h4>
+            </div>
+            <div class="card-body"></div>
+                <form action="upload-file" method="post" enctype="multipart/form-data">
+                    <label for="file">File</label>
+                    <input type="file" name="file" id="file" value="" required>
+                    <br>
+                    <input class="btn btn-primary btn-lg btn-block" type="submit" value="Upload">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
