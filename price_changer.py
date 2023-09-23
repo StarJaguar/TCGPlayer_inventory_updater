@@ -28,6 +28,7 @@ def upload_file():
             upload_time = dt.datetime.now().strftime("_%Y_%m_%d")
             full_name = secure_filename(os.path.splitext(f.filename)[0]) + upload_time + '.csv'
             f.save('C:/Users/Taylor/Documents/Projects/GIt_repositories/TCGPlayer_inventory_updater/static/datasets/' + full_name)
+            print(full_name)
             price_changer(full_name)
 
         else:
@@ -88,3 +89,14 @@ def getFiles(reqPath):
     parentFolderPath = os.path.relpath(Path(absPath).parents[0], FolderPath).replace("\\", "/")
 
     return render_template('files.html.j2', data={'files': fileObjs, 'parentFolder': parentFolderPath})
+
+@app.route('/delFile/<path:reqPath>')
+def del_file(reqPath):
+    absPath = safe_join(FolderPath, reqPath)
+
+    if not os.path.exists(absPath):
+        return abort(404)
+    
+    if os.path.isfile(absPath):
+        os.remove(absPath)
+        return redirect('/reports/')

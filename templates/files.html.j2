@@ -35,6 +35,22 @@
             </td>
             <td>{{fileObj['mTime']}}</td>
             <td>{{fileObj['size']}}</td>
+            <td>
+                <button onclick="document.getElementById('id01').style.display='block'"><i class = 'bi bi-trash'></i></button>
+
+                    <div id="id01" class="modal">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <div class="container">
+                        <h1>Delete File</h1>
+                        <p>Are you sure you want to delete your file?</p>
+
+                        <div class="clearfix">
+                            <button onclick="document.getElementById('id01').style.display='none'" type="button" class="cancelbtn">Cancel</button></a>
+                            <a href="{{ url_for('del_file', reqPath=fileObj['relPath']) }}"><button type="button" class="deletebtn">Delete</button></a>
+                        </div>
+                        </div>
+                    </div>                 
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -47,5 +63,18 @@ table {table-layout:fixed; width:100%;}
 table td, th {word-wrap:break-word;}
 th {text-align: left;}
 </style>
+
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
 
 {% endblock %}
